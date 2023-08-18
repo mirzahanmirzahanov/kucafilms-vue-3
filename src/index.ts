@@ -11,7 +11,7 @@ app.use(cors())
 app.use(express.json())
 app.use(logger('dev'))
 
-app.use("/stream", streamRouter)
+app.use('/stream', streamRouter)
 
 const PORT = process.env.PORT || 8080
 
