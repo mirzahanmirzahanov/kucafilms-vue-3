@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+	<title>Video Player</title>
+</head>
+
+<body>
+	<div id="app">
+		<video :src="videoUrl" controls autoplay></video>
+		<ul>
+			<li v-for=" file in files" :key="file.magnet">
+				{{file.fileName}}
+				<button @click="play(file)">Play</button>
+			</li>
+			<li>{{ activeVideo }}</li>
+			<li>{{ videoUrl }}</li>
+		</ul>
+	</div>
+</body>
+<script>
+	const { createApp, ref, computed } = Vue
+
+	createApp({
+		setup() {
+			let activeVideo = ref({})
+			const files = [
+				{
+					magnet: "549faec2087318c3dac1a45caaf570cf7d4e44cd",
+					fileName: 'She.Hulk.Attorney.at.Law.S01E01.WEB-DLRip-AVC.TR.mkv'
+				},
+				{
+					magnet: "2C3240D7EBC9704101F219777E29F4E620C1E5E3",
+					fileName: 'One Piece 207.mkv'
+				}
+			]
+
+			let videoUrl = computed(() => {
+				return activeVideo.value.fileName
+					? `/stream/${activeVideo.value.magnet}/${activeVideo.value.fileName}`
+					: ''
+			})
+
+			const play = async (file) => {
+				const response = await axios.get(`/stream/add/${file.magnet}`)
+				activeVideo.value = file
+			}
+			return {
+				files, videoUrl, activeVideo, play
+			}
+		}
+	}).mount('#app')
+</script>
+
+</html>
